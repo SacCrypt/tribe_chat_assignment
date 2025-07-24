@@ -1,64 +1,114 @@
+import MessageInput from "@/components/messageInput";
 import UserCard from "@/components/UserCard";
 import { allStylesObject } from "@/css/allStyles";
-import { useMessageStore } from "@/store/useMessageStore";
-import React, { useEffect } from "react";
-import { View } from "react-native";
 import {
   fetchAllParticipants,
   fetchRecentMessages,
-} from "../services/participantService";
-import { useParticipantStore } from "../store/useParticipantStore";
+} from "@/services/participantService";
+import { useMessageStore } from "@/store/useMessageStore";
+import { useParticipantStore } from "@/store/useParticipantStore";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 const ChatScreen = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const participants = useParticipantStore((s) => s.participants);
-  const rMessages = useMessageStore((s) => s.messages);
+  const setParticipants = useParticipantStore((s) => s.setParticipants);
+
+  const messages = useMessageStore((s) => s.messages);
+  const setMessages = useMessageStore((s) => s.setMessages);
+
   useEffect(() => {
-    const loadParticipants = async () => {
-      const participants = await fetchAllParticipants();
-      useParticipantStore.getState().setParticipants(participants);
+    const hydrate = async () => {
+      try {
+        const [participantList, recentMessages] = await Promise.all([
+          fetchAllParticipants(),
+          fetchRecentMessages(),
+        ]);
+
+        setParticipants(participantList);
+        setMessages(recentMessages);
+      } catch (err) {
+        console.error("Failed to load data", err);
+        setError("Failed to load chat data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const loadRecentMessages = async () => {
-      const recentMessages = await fetchRecentMessages();
-      useMessageStore.getState().setMessages(recentMessages);
-    };
-
-    loadParticipants();
-    loadRecentMessages();
+    hydrate();
   }, []);
 
-  let prevUserObject = null;
-  return (
-    <View style={allStylesObject.container}>
-      {Object.values(rMessages).map((message, index) => {
-        const userObject = Object.values(participants).find(
-          (obj) => obj.uuid != message.authorUuid
-        );
+  const sortedMessages = useMemo(() => {
+    return Object.values(messages).sort(
+      (a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
+    );
+  }, [messages]);
 
-        const authorName = userObject?.name;
-        if (authorName === prevUserObject?.name) {
-          return (
-            <UserCard
-              key={index}
-              user={userObject}
-              prevMatch={true}
-              prevObj={prevUserObject}
-              messageObj={message}
-            />
-          );
-        } else {
-          prevUserObject = userObject;
-          return (
-            <UserCard
-              key={index}
-              user={userObject}
-              prevMatch={false}
-              prevObj={null}
-              messageObj={message}
-            />
-          );
+  const participantsMap = useMemo(() => {
+    return participants || {};
+  }, [participants]);
+
+  const renderItem = ({ item, index }: any) => {
+    const user = participantsMap[item.authorUuid];
+    const prevItem = sortedMessages[index + 1];
+    const prevUser = prevItem ? participantsMap[prevItem.authorUuid] : null;
+
+    const isSameUserAsPrevious = user?.uuid === prevUser?.uuid;
+
+    return (
+      <UserCard
+        user={user}
+        prevMatch={isSameUserAsPrevious}
+        prevObj={prevUser}
+        messageObj={item}
+      />
+    );
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          allStylesObject.container,
+          { flex: 1, justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View
+        style={[
+          allStylesObject.container,
+          { flex: 1, justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text style={{ color: "white" }}>{error}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={[allStylesObject.container, { flex: 1 }]}>
+      <FlatList
+        data={sortedMessages}
+        keyExtractor={(item) => item.uuid}
+        inverted
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingTop: 10 }}
+        ListEmptyComponent={
+          <Text style={{ color: "#aaa", textAlign: "center", marginTop: 20 }}>
+            No messages yet.
+          </Text>
         }
-      })}
+      />
+      <MessageInput />
     </View>
   );
 };

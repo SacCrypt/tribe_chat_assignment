@@ -8,23 +8,79 @@ const padding = 12;
 const indent = avatarSize + padding;
 
 const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
+  if (!user) return null;
+
   const { avatarUrl, name } = user;
+
   const date = new Date(messageObj.sentAt).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
   });
 
+  const EditedLabel = () =>
+    messageObj.sentAt !== messageObj.updatedAt && (
+      <Text
+        style={{
+          color: "orange",
+          fontStyle: "italic",
+          fontSize: 12,
+          marginTop: 4,
+        }}
+      >
+        (edited)
+      </Text>
+    );
+
+  const Reactions = () =>
+    messageObj.reactions?.length > 0 && (
+      <View style={allStylesObject.reactionRow}>
+        {messageObj.reactions.map((reactionObj, index) => (
+          <Text key={index} style={allStylesObject.reaction}>
+            {reactionObj.value} <Text style={{ color: "white" }}>1</Text>
+          </Text>
+        ))}
+      </View>
+    );
+
+  const Attachment = () =>
+    messageObj.attachments?.url && (
+      <Image
+        source={{ uri: messageObj.attachments.url }}
+        style={{
+          width: 200,
+          height: 200,
+          borderRadius: 8,
+          marginTop: 8,
+          backgroundColor: "#ccc",
+        }}
+        resizeMode="cover"
+      />
+    );
+
   return prevMatch ? (
     <View style={{ marginLeft: indent }}>
-      <Text style={allStylesObject.text}>{messageObj.text}</Text>
+      <View>
+        <Text style={allStylesObject.text}>{messageObj.text}</Text>
+        <EditedLabel />
+        <Attachment />
+        <Reactions />
+      </View>
     </View>
   ) : (
     <View
-      style={{ flexDirection: "row", alignItems: "center", paddingVertical: 2 }}
+      style={{
+        flexDirection: "row",
+        alignItems: "flex-start",
+        paddingVertical: 2,
+      }}
     >
       <Image
-        source={{ uri: avatarUrl }}
+        source={
+          avatarUrl
+            ? { uri: avatarUrl }
+            : require("../assets/images/default.jpg")
+        }
         style={{
           width: avatarSize,
           height: avatarSize,
@@ -38,6 +94,7 @@ const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
             flexDirection: "row",
             alignItems: "center",
             flexWrap: "wrap",
+            marginBottom: 2,
           }}
         >
           <Text
@@ -50,9 +107,13 @@ const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
           >
             {name}
           </Text>
-          <Text style={{ color: "#aaa" }}>{date}</Text>
+          <Text style={{ color: "#aaa", fontSize: 12 }}>{date}</Text>
         </View>
+
         <Text style={allStylesObject.text}>{messageObj.text}</Text>
+        <EditedLabel />
+        <Attachment />
+        <Reactions />
       </View>
     </View>
   );

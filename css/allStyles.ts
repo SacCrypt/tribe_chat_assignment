@@ -29,7 +29,51 @@ export const allStylesObject = StyleSheet.create({
     backgroundColor: "#36393f",
     padding: 12,
   },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+    marginRight: 8,
+  },
+  sendButton: {
+    backgroundColor: "#007bff", // Blue background
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
+  sendText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  textContainer: {
+    bottom: 0,
+    width: "100%",
+    backgroundColor: "#36393f",
+    padding: 8,
+    borderTopWidth: 1,
+    borderColor: "#ccc",
+  },
+  reactionRow: {
+    flexDirection: "row",
+    marginTop: 6,
+  },
+  reaction: {
+    marginRight: 6,
+    fontSize: 16,
+    backgroundColor: "#32568f",
+    padding: 4,
+    borderRadius: 12,
+  },
   text: {
     color: "#e0d4d3",
     flexDirection: "row",

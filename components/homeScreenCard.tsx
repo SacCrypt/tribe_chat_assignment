@@ -1,4 +1,3 @@
-// components/homeScreenCard.tsx
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 const HomeScreenCard = ({ onPress }: { onPress: () => void }) => (

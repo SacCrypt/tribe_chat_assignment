@@ -1,21 +1,26 @@
-import LoadingScreen from "@/components/loadingScreen";
 import MessageInput from "@/components/messageInput";
 import UserCard from "@/components/UserCard";
 import { allStylesObject } from "@/css/allStyles";
-import { fetchAllParticipants } from "@/services/participantService";
-
 import {
   fetchOlderMessages,
   fetchRecentMessages,
 } from "@/services/messageService";
+import { fetchAllParticipants } from "@/services/participantService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useParticipantStore } from "@/store/useParticipantStore";
+//import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+import UserInfoModal from "@/components/userModal";
+import LoadingScreen from "./loadingScreen";
+
 const ChatScreen = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalData, setModalData] = useState({});
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const addMessages = useMessageStore((s) => s.appendMessages);
@@ -29,7 +34,6 @@ const ChatScreen = () => {
 
     setLoadingMore(true);
     try {
-      console.log("-->", sortedMessages);
       const last = sortedMessages[sortedMessages.length - 1];
 
       const older = await fetchOlderMessages(last.uuid);
@@ -49,6 +53,7 @@ const ChatScreen = () => {
   useEffect(() => {
     const hydrate = async () => {
       try {
+        setLoading(true);
         const [participantList, recentMessages] = await Promise.all([
           fetchAllParticipants(),
           fetchRecentMessages(),
@@ -65,6 +70,20 @@ const ChatScreen = () => {
 
     hydrate();
   }, []);
+
+  //const navigation = useNavigation();
+  // const insets = useSafeAreaInsets();
+  // useEffect(() => {
+  //   if (loading) {
+  //     navigation.setOptions({
+  //       headerShown: false,
+  //     });
+  //   } else {
+  //     navigation.setOptions({
+  //       headerShown: true,
+  //     });
+  //   }
+  // }, [navigation, loading]);
 
   const sortedMessages = useMemo(() => {
     return Object.values(messages).sort(
@@ -88,6 +107,8 @@ const ChatScreen = () => {
         prevMatch={isSameUserAsPrevious}
         prevObj={prevUser}
         messageObj={item}
+        setIsModalVisible={setIsModalVisible}
+        setModalData={setModalData}
       />
     );
   };
@@ -95,7 +116,7 @@ const ChatScreen = () => {
   if (loading) {
     return (
       <View style={[allStylesObject.container]}>
-        <LoadingScreen loading={loading} />
+        <LoadingScreen />
       </View>
     );
   }
@@ -112,8 +133,18 @@ const ChatScreen = () => {
       </View>
     );
   }
+
   return (
-    <View style={[allStylesObject.container]}>
+    <View style={allStylesObject.container}>
+      {isModalVisible ? (
+        <UserInfoModal
+          visible={isModalVisible}
+          user={modalData}
+          onClose={() => setIsModalVisible(false)}
+        />
+      ) : (
+        ""
+      )}
       <FlatList
         onEndReached={loadOlderMessages}
         onEndReachedThreshold={0.1}
@@ -134,7 +165,6 @@ const ChatScreen = () => {
         }
         keyboardShouldPersistTaps="handled"
       />
-
       <MessageInput />
     </View>
   );

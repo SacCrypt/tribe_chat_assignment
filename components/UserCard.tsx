@@ -1,17 +1,23 @@
 import { allStylesObject } from "@/css/allStyles";
 import React, { useState } from "react";
-import { Dimensions, Image, Text, View } from "react-native";
+import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
 const avatarSize = 35;
 const padding = 12;
 const indent = avatarSize + padding;
 
-const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
+const UserCard = ({
+  user,
+  prevMatch,
+  prevObj,
+  messageObj,
+  setIsModalVisible,
+  setModalData,
+}) => {
   if (!user) return null;
 
   const [loadError, setLoadError] = useState(false);
-
   const { avatarUrl, name } = user;
 
   const date = new Date(messageObj.sentAt).toLocaleTimeString([], {
@@ -82,16 +88,24 @@ const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
         paddingVertical: 2,
       }}
     >
-      <Image
-        source={imageSource}
-        onError={() => setLoadError(true)}
-        style={{
-          width: avatarSize,
-          height: avatarSize,
-          borderRadius: avatarSize / 2,
-          backgroundColor: "#ccc",
+      <TouchableOpacity
+        onPress={() => {
+          setIsModalVisible(true);
+          setModalData(user);
         }}
-      />
+      >
+        <Image
+          source={imageSource}
+          onError={() => setLoadError(true)}
+          style={{
+            width: avatarSize,
+            height: avatarSize,
+            borderRadius: avatarSize / 2,
+            backgroundColor: "#ccc",
+          }}
+        />
+      </TouchableOpacity>
+
       <View style={{ marginLeft: padding, flex: 1 }}>
         <View
           style={{
@@ -101,16 +115,24 @@ const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
             marginBottom: 2,
           }}
         >
-          <Text
-            style={{
-              color: "#ffffff",
-              marginRight: 8,
-              fontWeight: "bold",
-              fontSize: 16,
+          <TouchableOpacity
+            onPress={() => {
+              setIsModalVisible(true);
+              setModalData(user);
             }}
           >
-            {name}
-          </Text>
+            <Text
+              style={{
+                color: "#ffffff",
+                marginRight: 8,
+                fontWeight: "bold",
+                fontSize: 16,
+              }}
+            >
+              {name}
+            </Text>
+          </TouchableOpacity>
+
           <Text style={{ color: "#aaa", fontSize: 12 }}>{date}</Text>
         </View>
 

@@ -20,21 +20,19 @@ const MessageInput = () => {
   };
 
   return (
-    <View style={allStylesObject.textContainer}>
-      <View style={allStylesObject.inputRow}>
-        <TextInput
-          placeholder="Type a message..."
-          value={text}
-          onChangeText={setText}
-          style={allStylesObject.input}
-        />
-        <TouchableOpacity
-          onPress={() => handleSend(text)}
-          style={allStylesObject.sendButton}
-        >
-          <Text style={allStylesObject.sendText}>Send</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={allStylesObject.inputRow}>
+      <TextInput
+        placeholder="Type a message..."
+        value={text}
+        onChangeText={setText}
+        style={allStylesObject.input}
+      />
+      <TouchableOpacity
+        onPress={() => handleSend(text)}
+        style={allStylesObject.sendButton}
+      >
+        <Text style={allStylesObject.sendText}>Send</Text>
+      </TouchableOpacity>
     </View>
   );
 };

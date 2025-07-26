@@ -27,7 +27,7 @@ export const allStylesObject = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#36393f",
-    padding: 12,
+    padding: 20,
   },
   inputRow: {
     flexDirection: "row",

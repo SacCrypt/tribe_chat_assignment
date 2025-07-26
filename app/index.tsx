@@ -1,17 +1,18 @@
 import HomeScreenCard from "@/components/homeScreenCard";
 import { useRouter } from "expo-router";
 import React from "react";
-import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const router = useRouter();
 
   const handleCardPress = () => {
-    router.push("/chatScreen");
+    router.navigate("/chatScreen");
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safecontainer}>
       <Text style={styles.title}>Welcome to Tribe Chat 👋</Text>
       <HomeScreenCard onPress={handleCardPress} />
     </SafeAreaView>
@@ -21,12 +22,11 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  safecontainer: {
     flex: 1,
     backgroundColor: "#1e1f22",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
   title: {
     fontSize: 24,

@@ -1,23 +1,13 @@
 import { Stack } from "expo-router";
-import { Platform, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#1e1f22",
-          shadowColor: "transparent",
+          backgroundColor: "#2a2f36",
         },
-        headerTintColor: "#ffffff",
-        headerTitleStyle: {
-          fontWeight: "700",
-          fontSize: 20,
-          letterSpacing: 0.5,
-        },
-        headerTitleAlign: "center",
-        headerShadowVisible: false,
-        headerStatusBarHeight: Platform.OS === "ios" ? 50 : undefined,
       }}
     >
       <Stack.Screen
@@ -25,19 +15,37 @@ export default function RootLayout() {
         options={{
           headerTitle: () => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Image
+                source={require("@/assets/images/tribechat.png")}
+                style={{
+                  width: 35,
+                  height: 35,
+                  marginRight: 8,
+                  marginLeft: 5,
+                }}
+                resizeMode="contain"
+              />
               <Text
                 style={{
                   color: "#ffffff",
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: "bold",
                 }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
               >
-                🔥 Tribe Chat
+                Tribe
               </Text>
             </View>
           ),
+        }}
+      />
+      <Stack.Screen
+        name="chatScreen"
+        options={{
+          headerTitle: "Chat Room",
+          headerStyle: {
+            backgroundColor: "#2a2f36",
+          },
+          headerTintColor: "#ffffff",
         }}
       />
     </Stack>

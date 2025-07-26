@@ -2,17 +2,11 @@ import { allStylesObject } from "@/css/allStyles";
 import { postNewMessage } from "@/services/messageService";
 import { useMessageStore } from "@/store/useMessageStore";
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
+
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
 
@@ -24,12 +18,9 @@ const MessageInput = () => {
       console.error("Error sending message:", err);
     }
   };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={80}
-      style={allStylesObject.textContainer}
-    >
+    <View style={allStylesObject.textContainer}>
       <View style={allStylesObject.inputRow}>
         <TextInput
           placeholder="Type a message..."
@@ -44,7 +35,7 @@ const MessageInput = () => {
           <Text style={allStylesObject.sendText}>Send</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

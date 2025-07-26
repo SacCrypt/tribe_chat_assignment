@@ -1,14 +1,16 @@
 import { allStylesObject } from "@/css/allStyles";
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions, Image, Text, View } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
-const avatarSize = 48;
+const avatarSize = 35;
 const padding = 12;
 const indent = avatarSize + padding;
 
 const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
   if (!user) return null;
+
+  const [loadError, setLoadError] = useState(false);
 
   const { avatarUrl, name } = user;
 
@@ -58,6 +60,11 @@ const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
       />
     );
 
+  const imageSource =
+    !loadError && avatarUrl
+      ? { uri: avatarUrl }
+      : require("@/assets/images/tribechat.png");
+
   return prevMatch ? (
     <View style={{ marginLeft: indent }}>
       <View>
@@ -76,11 +83,8 @@ const UserCard = ({ user, prevMatch, prevObj, messageObj }) => {
       }}
     >
       <Image
-        source={
-          avatarUrl
-            ? { uri: avatarUrl }
-            : require("../assets/images/default.jpg")
-        }
+        source={imageSource}
+        onError={() => setLoadError(true)}
         style={{
           width: avatarSize,
           height: avatarSize,

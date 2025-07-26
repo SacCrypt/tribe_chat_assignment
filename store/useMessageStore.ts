@@ -8,6 +8,7 @@ type MessageStore = {
   setMessages: (msgs: TMessageJSON[]) => void;
   addMessage: (msg: TMessageJSON) => void;
   updateMessage: (msg: TMessageJSON) => void;
+  appendMessages: (msgs: TMessageJSON) => void;
 };
 
 export const useMessageStore = create<MessageStore>()(
@@ -27,6 +28,12 @@ export const useMessageStore = create<MessageStore>()(
         set((state) => ({
           messages: { ...state.messages, [msg.uuid]: msg },
         }));
+      },
+      appendMessages: (msgs) => {
+        const current = get().messages;
+        const newEntries = msgs.filter((msg) => !current[msg.uuid]);
+        const newMap = Object.fromEntries(newEntries.map((m) => [m.uuid, m]));
+        set({ messages: { ...current, ...newMap } });
       },
     }),
     {

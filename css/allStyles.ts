@@ -36,16 +36,16 @@ export const allStylesObject = StyleSheet.create({
   input: {
     flex: 1,
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 12,
     backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
   sendButton: {
-    backgroundColor: "#007bff", // Blue background
+    backgroundColor: "#f08f35",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    marginLeft: 8,
+    width: 75,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -56,7 +56,6 @@ export const allStylesObject = StyleSheet.create({
     fontSize: 16,
   },
   textContainer: {
-    bottom: 0,
     width: "100%",
     backgroundColor: "#36393f",
     padding: 8,

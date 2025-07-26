@@ -1,24 +1,32 @@
 import { allStylesObject } from "@/css/allStyles";
 import React, { useState } from "react";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { TMessageJSON } from "../types/message";
+import { User } from "../types/user";
 
 const screenWidth = Dimensions.get("window").width;
 const avatarSize = 35;
 const padding = 12;
 const indent = avatarSize + padding;
 
+type UserCardProps = {
+  user: User;
+  prevMatch: boolean;
+  messageObj: TMessageJSON;
+  setIsModalVisible: (visible: boolean) => void;
+  setModalData: (data: User) => void;
+};
+
 const UserCard = ({
-  user,
+  user: User,
   prevMatch,
-  prevObj,
   messageObj,
   setIsModalVisible,
   setModalData,
-}) => {
-  if (!user) return null;
-
+}: UserCardProps) => {
+  if (!User) return null;
   const [loadError, setLoadError] = useState(false);
-  const { avatarUrl, name } = user;
+  const { avatarUrl, name } = User;
 
   const date = new Date(messageObj.sentAt).toLocaleTimeString([], {
     hour: "2-digit",
@@ -91,7 +99,7 @@ const UserCard = ({
       <TouchableOpacity
         onPress={() => {
           setIsModalVisible(true);
-          setModalData(user);
+          setModalData(User);
         }}
       >
         <Image
@@ -118,7 +126,7 @@ const UserCard = ({
           <TouchableOpacity
             onPress={() => {
               setIsModalVisible(true);
-              setModalData(user);
+              setModalData(User);
             }}
           >
             <Text

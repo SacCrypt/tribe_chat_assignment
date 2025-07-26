@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, PersistStorage } from "zustand/middleware";
 import { TMessageJSON } from "../types/message";
 
 type MessageStore = {
@@ -8,7 +8,21 @@ type MessageStore = {
   setMessages: (msgs: TMessageJSON[]) => void;
   addMessage: (msg: TMessageJSON) => void;
   updateMessage: (msg: TMessageJSON) => void;
-  appendMessages: (msgs: TMessageJSON) => void;
+  appendMessages: (msgs: TMessageJSON[]) => void;
+};
+
+// JSON-safe wrapper around AsyncStorage
+const storage: PersistStorage<MessageStore> = {
+  getItem: async (name) => {
+    const value = await AsyncStorage.getItem(name);
+    return value ? JSON.parse(value) : null;
+  },
+  setItem: async (name, value) => {
+    await AsyncStorage.setItem(name, JSON.stringify(value));
+  },
+  removeItem: async (name) => {
+    await AsyncStorage.removeItem(name);
+  },
 };
 
 export const useMessageStore = create<MessageStore>()(
@@ -38,11 +52,7 @@ export const useMessageStore = create<MessageStore>()(
     }),
     {
       name: "messages-storage",
-      storage: {
-        getItem: AsyncStorage.getItem,
-        setItem: AsyncStorage.setItem,
-        removeItem: AsyncStorage.removeItem,
-      },
+      storage,
     }
   )
 );

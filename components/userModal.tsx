@@ -11,6 +11,7 @@ import {
 
 const UserInfoModal = ({ visible, onClose, user }) => {
   if (!user) return null;
+
   const [loadError, setLoadError] = useState(false);
 
   const uri = user.avatarUrl;

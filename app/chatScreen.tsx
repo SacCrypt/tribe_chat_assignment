@@ -8,6 +8,7 @@ import {
 import { fetchAllParticipants } from "@/services/participantService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useParticipantStore } from "@/store/useParticipantStore";
+import { TMessageJSON } from "@/types/message";
 //import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
@@ -37,7 +38,6 @@ const ChatScreen = () => {
       const last = sortedMessages[sortedMessages.length - 1];
 
       const older = await fetchOlderMessages(last.uuid);
-
       if (older.length === 0) {
         setHasMore(false);
       } else {
@@ -95,7 +95,13 @@ const ChatScreen = () => {
     return participants || {};
   }, [participants]);
 
-  const renderItem = ({ item, index }) => {
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: TMessageJSON;
+    index: number;
+  }) => {
     const user = participantsMap[item.authorUuid];
     const prevItem = sortedMessages[index + 1];
     const prevUser = prevItem ? participantsMap[prevItem.authorUuid] : null;
@@ -105,7 +111,6 @@ const ChatScreen = () => {
       <UserCard
         user={user}
         prevMatch={isSameUserAsPrevious}
-        prevObj={prevUser}
         messageObj={item}
         setIsModalVisible={setIsModalVisible}
         setModalData={setModalData}
@@ -133,7 +138,6 @@ const ChatScreen = () => {
       </View>
     );
   }
-
   return (
     <View style={allStylesObject.container}>
       {isModalVisible ? (

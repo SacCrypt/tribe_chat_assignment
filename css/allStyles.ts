@@ -4,7 +4,6 @@ export const allStylesObject = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
     borderRadius: 10,
     marginBottom: 12,
   },
@@ -27,9 +26,13 @@ export const allStylesObject = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#36393f",
-    padding: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 5,
   },
   inputRow: {
+    paddingBottom: 20,
+    paddingTop: 20,
     flexDirection: "row",
     alignItems: "center",
   },

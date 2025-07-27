@@ -11,11 +11,19 @@ import { useParticipantStore } from "@/store/useParticipantStore";
 import { TMessageJSON } from "@/types/message";
 //import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, Text, View, Image } from "react-native";
-
+import {
+  FlatList,
+  Text,
+  View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+} from "react-native";
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
 import UserInfoModal from "@/components/userModal";
 import LoadingScreen from "./loadingScreen";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ChatScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -23,13 +31,14 @@ const ChatScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalData, setModalData] = useState({});
   const [loadingMore, setLoadingMore] = useState(false);
+  const [errorImages, setErrorImages] = useState(new Set<string>());
   const [hasMore, setHasMore] = useState(true);
+
   const addMessages = useMessageStore((s) => s.appendMessages);
   const participants = useParticipantStore((s) => s.participants);
   const setParticipants = useParticipantStore((s) => s.setParticipants);
   const messages = useMessageStore((s) => s.messages);
   const setMessages = useMessageStore((s) => s.setMessages);
-  const [errorImages, setErrorImages] = useState(new Set<string>());
 
   const loadOlderMessages = async () => {
     if (loadingMore || !hasMore || sortedMessages.length === 0) return;
@@ -37,7 +46,6 @@ const ChatScreen = () => {
     setLoadingMore(true);
     try {
       const last = sortedMessages[sortedMessages.length - 1];
-      console.log("---<", last);
       const older = await fetchOlderMessages(last.uuid);
       if (older.length === 0) {
         setHasMore(false);
@@ -162,38 +170,44 @@ const ChatScreen = () => {
     );
   }
   return (
-    <View style={allStylesObject.container}>
-      {isModalVisible ? (
-        <UserInfoModal
-          visible={isModalVisible}
-          user={modalData}
-          onClose={() => setIsModalVisible(false)}
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 120}
+        style={allStylesObject.container}
+      >
+        {isModalVisible ? (
+          <UserInfoModal
+            visible={isModalVisible}
+            user={modalData}
+            onClose={() => setIsModalVisible(false)}
+          />
+        ) : (
+          ""
+        )}
+        <FlatList
+          onEndReached={loadOlderMessages}
+          onEndReachedThreshold={0.1}
+          data={sortedMessages}
+          keyExtractor={(item) => item.uuid}
+          inverted
+          renderItem={renderItem}
+          ListEmptyComponent={
+            <Text
+              style={{
+                color: "#aaa",
+                textAlign: "center",
+                marginTop: 20,
+              }}
+            >
+              No messages yet.
+            </Text>
+          }
+          keyboardShouldPersistTaps="handled"
         />
-      ) : (
-        ""
-      )}
-      <FlatList
-        onEndReached={loadOlderMessages}
-        onEndReachedThreshold={0.1}
-        data={sortedMessages}
-        keyExtractor={(item) => item.uuid}
-        inverted
-        renderItem={renderItem}
-        ListEmptyComponent={
-          <Text
-            style={{
-              color: "#aaa",
-              textAlign: "center",
-              marginTop: 20,
-            }}
-          >
-            No messages yet.
-          </Text>
-        }
-        keyboardShouldPersistTaps="handled"
-      />
-      <MessageInput />
-    </View>
+        <MessageInput />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

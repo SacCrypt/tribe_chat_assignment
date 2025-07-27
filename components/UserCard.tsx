@@ -28,7 +28,6 @@ const UserCard = ({
 }: UserCardProps) => {
   if (!User) return null;
 
-  const [loadError, setLoadError] = useState(false);
   const { avatarUrl, name } = User;
 
   const date = new Date(messageObj.sentAt).toLocaleTimeString([], {

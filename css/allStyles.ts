@@ -23,6 +23,7 @@ export const allStylesObject = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
+
   container: {
     flex: 1,
     backgroundColor: "#36393f",
@@ -31,7 +32,7 @@ export const allStylesObject = StyleSheet.create({
     paddingTop: 5,
   },
   inputRow: {
-    paddingBottom: 20,
+    paddingBottom: 30,
     paddingTop: 20,
     flexDirection: "row",
     alignItems: "center",

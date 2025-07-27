@@ -10,14 +10,15 @@ export type TMessageJSON = {
 };
 
 export type TReaction = {
+  uuid: string;
   participantUuid: string;
-  emoji: string;
+  value: string;
 };
 
-type TAttachment = {
+export type TAttachment = {
+  url: string;
   uuid: string;
   type: "image";
-  url: string;
   width: number;
   height: number;
 };

@@ -18,12 +18,12 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
 } from "react-native";
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
 import UserInfoModal from "@/components/userModal";
 import LoadingScreen from "./loadingScreen";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from "react-native-safe-area-context";
+// import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ChatScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -170,44 +170,43 @@ const ChatScreen = () => {
     );
   }
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 120}
-        style={allStylesObject.container}
-      >
-        {isModalVisible ? (
-          <UserInfoModal
-            visible={isModalVisible}
-            user={modalData}
-            onClose={() => setIsModalVisible(false)}
-          />
-        ) : (
-          ""
-        )}
-        <FlatList
-          onEndReached={loadOlderMessages}
-          onEndReachedThreshold={0.1}
-          data={sortedMessages}
-          keyExtractor={(item) => item.uuid}
-          inverted
-          renderItem={renderItem}
-          ListEmptyComponent={
-            <Text
-              style={{
-                color: "#aaa",
-                textAlign: "center",
-                marginTop: 20,
-              }}
-            >
-              No messages yet.
-            </Text>
-          }
-          keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      behavior="padding"
+      keyboardVerticalOffset={100}
+      style={allStylesObject.container}
+    >
+      {isModalVisible ? (
+        <UserInfoModal
+          visible={isModalVisible}
+          user={modalData}
+          onClose={() => setIsModalVisible(false)}
         />
-        <MessageInput />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      ) : (
+        ""
+      )}
+      <FlatList
+        onEndReached={loadOlderMessages}
+        onEndReachedThreshold={0.1}
+        data={sortedMessages}
+        keyExtractor={(item) => item.uuid}
+        inverted
+        keyboardShouldPersistTaps="handled"
+        renderItem={renderItem}
+        ListEmptyComponent={
+          <Text
+            style={{
+              color: "#aaa",
+              textAlign: "center",
+              marginTop: 20,
+            }}
+          >
+            No messages yet.
+          </Text>
+        }
+      />
+
+      <MessageInput />
+    </KeyboardAvoidingView>
   );
 };
 

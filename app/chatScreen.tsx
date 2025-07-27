@@ -11,7 +11,7 @@ import { useParticipantStore } from "@/store/useParticipantStore";
 import { TMessageJSON } from "@/types/message";
 //import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, View, Image } from "react-native";
 
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
 import UserInfoModal from "@/components/userModal";
@@ -29,6 +29,7 @@ const ChatScreen = () => {
   const setParticipants = useParticipantStore((s) => s.setParticipants);
   const messages = useMessageStore((s) => s.messages);
   const setMessages = useMessageStore((s) => s.setMessages);
+  const [errorImages, setErrorImages] = useState(new Set<string>());
 
   const loadOlderMessages = async () => {
     if (loadingMore || !hasMore || sortedMessages.length === 0) return;
@@ -36,7 +37,7 @@ const ChatScreen = () => {
     setLoadingMore(true);
     try {
       const last = sortedMessages[sortedMessages.length - 1];
-
+      console.log("---<", last);
       const older = await fetchOlderMessages(last.uuid);
       if (older.length === 0) {
         setHasMore(false);
@@ -49,6 +50,29 @@ const ChatScreen = () => {
       setLoadingMore(false);
     }
   };
+
+  useEffect(() => {
+    if (!participants || typeof participants !== "object") {
+      console.warn("No participants or invalid format");
+      return;
+    }
+
+    const urls = Object.values(participants)
+      .map((p) => p?.avatarUrl)
+      .filter((url) => typeof url === "string" && url.startsWith("http"));
+
+    urls.forEach((uri) => {
+      Image.prefetch(uri)
+        .then((success) => {})
+        .catch((err) => {
+          setErrorImages((prevSet) => {
+            const newSet = new Set(prevSet);
+            newSet.add(uri);
+            return newSet;
+          });
+        });
+    });
+  }, [participants]);
 
   useEffect(() => {
     const hydrate = async () => {
@@ -84,7 +108,6 @@ const ChatScreen = () => {
   //     });
   //   }
   // }, [navigation, loading]);
-
   const sortedMessages = useMemo(() => {
     return Object.values(messages).sort(
       (a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
@@ -106,7 +129,6 @@ const ChatScreen = () => {
     const prevItem = sortedMessages[index + 1];
     const prevUser = prevItem ? participantsMap[prevItem.authorUuid] : null;
     const isSameUserAsPrevious = user?.uuid === prevUser?.uuid;
-
     return (
       <UserCard
         user={user}
@@ -114,6 +136,7 @@ const ChatScreen = () => {
         messageObj={item}
         setIsModalVisible={setIsModalVisible}
         setModalData={setModalData}
+        errorImages={errorImages}
       />
     );
   };

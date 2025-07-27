@@ -54,7 +54,7 @@ export default function RootLayout() {
             headerTintColor: "#ffffff",
           }}
         />
-        <Stack.Screen name="loadingScreen" />
+        <Stack.Screen options={{}} name="loadingScreen" />
       </Stack>
     </SafeAreaProvider>
   );

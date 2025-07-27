@@ -15,6 +15,7 @@ type UserCardProps = {
   messageObj: TMessageJSON;
   setIsModalVisible: (visible: boolean) => void;
   setModalData: (data: User) => void;
+  errorImages: Set<String>;
 };
 
 const UserCard = ({
@@ -23,8 +24,10 @@ const UserCard = ({
   messageObj,
   setIsModalVisible,
   setModalData,
+  errorImages,
 }: UserCardProps) => {
   if (!User) return null;
+
   const [loadError, setLoadError] = useState(false);
   const { avatarUrl, name } = User;
 
@@ -68,16 +71,10 @@ const UserCard = ({
           height: 200,
           borderRadius: 8,
           marginTop: 8,
-          backgroundColor: "#ccc",
         }}
         resizeMode="cover"
       />
     );
-
-  const imageSource =
-    !loadError && avatarUrl
-      ? { uri: avatarUrl }
-      : require("@/assets/images/tribechat.png");
 
   return prevMatch ? (
     <View style={{ marginLeft: indent }}>
@@ -103,13 +100,15 @@ const UserCard = ({
         }}
       >
         <Image
-          source={imageSource}
-          onError={() => setLoadError(true)}
+          source={
+            errorImages.has(avatarUrl)
+              ? require("@/assets/images/tribechat.png")
+              : { uri: avatarUrl }
+          }
           style={{
             width: avatarSize,
             height: avatarSize,
             borderRadius: avatarSize / 2,
-            backgroundColor: "#ccc",
           }}
         />
       </TouchableOpacity>

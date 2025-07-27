@@ -38,7 +38,9 @@ export const fetchAllMessages = async (): Promise<TMessageJSON[]> => {
 export const fetchOlderMessages = async (
   reference_uuid: string
 ): Promise<TMessageJSON[]> => {
+  console.log("##", `${rootUrl}/messages/older/${reference_uuid}`);
   const response = await fetch(`${rootUrl}/messages/older/${reference_uuid}`);
+  console.log(response);
   if (!response.ok) throw new Error("Failed to fetch latest Messages");
   return await response.json();
 };
